@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
+import '../theme/colors.dart';
+import '../widgets/glass_card.dart';
+import '../widgets/screen_header.dart';
+import '../widgets/app_status_bar.dart';
 
 class SettingsScreen extends StatefulWidget {
-  final VoidCallback onToggleTheme;
-  final ThemeMode themeMode;
-
-  const SettingsScreen({
-    super.key,
-    required this.onToggleTheme,
-    required this.themeMode,
-  });
+  const SettingsScreen({super.key});
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -18,257 +15,170 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _universalClipboard = true;
   bool _e2eEncryption = true;
   bool _excludePasswords = true;
+  bool _localNetworkOnly = false;
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final tt = Theme.of(context).textTheme;
-    final isDark = widget.themeMode == ThemeMode.dark;
-
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar.large(
-            title: const Text('Settings'),
+    return SafeArea(
+      bottom: false,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const AppStatusBar(),
+          const ScreenHeader(
+            pretitle: 'ACCOUNT',
+            title: 'Settings',
+            sub: 'v2.4.1 · build 8812',
           ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          // Profile card
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+            child: GlassCard(
+              strong: true,
+              borderRadius: BorderRadius.circular(22),
+              padding: const EdgeInsets.all(16),
+              child: Row(
                 children: [
-                  Text(
-                    'v2.4.1 · build 8812',
-                    style: tt.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
-                  ),
-                  const SizedBox(height: 24),
-                  // Profile card
                   Container(
-                    padding: const EdgeInsets.all(20),
+                    width: 48,
+                    height: 48,
                     decoration: BoxDecoration(
-                      color: cs.secondaryContainer,
-                      borderRadius: BorderRadius.circular(28),
+                      gradient: const LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [kTeal, kBlue],
+                      ),
+                      shape: BoxShape.circle,
                     ),
-                    child: Row(
+                    child: Center(
+                      child: Text(
+                        'MR',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: kTealDark,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CircleAvatar(
-                          radius: 26,
-                          backgroundColor: cs.primary,
-                          child: Text(
-                            'MR',
-                            style: tt.titleMedium?.copyWith(
-                              color: cs.onPrimary,
-                              fontWeight: FontWeight.w600,
-                            ),
+                        const Text(
+                          'Morgan Rivera',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                            letterSpacing: -0.2,
                           ),
                         ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Morgan Rivera',
-                                style: tt.titleMedium?.copyWith(
-                                  color: cs.onSecondaryContainer,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                'morgan@rivera.studio',
-                                style: tt.bodySmall?.copyWith(
-                                  color: cs.onSecondaryContainer.withValues(alpha: 0.75),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: cs.tertiaryContainer,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            'PRO',
-                            style: tt.labelSmall?.copyWith(
-                              color: cs.onTertiaryContainer,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 0.6,
-                              fontSize: 10,
-                            ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'morgan@rivera.studio',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: kWhite45,
+                            fontFamily: 'Courier',
                           ),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 24),
-                  // Sync group
-                  _SettingsGroup(
-                    label: 'SYNC',
-                    children: [
-                      _SettingsRow(
-                        icon: Icons.bolt_outlined,
-                        title: 'Universal Clipboard',
-                        trailing: Switch(
-                          value: _universalClipboard,
-                          onChanged: (v) => setState(() => _universalClipboard = v),
-                        ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: kTealDim,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      'PRO',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        color: kTeal,
+                        fontFamily: 'Courier',
+                        letterSpacing: 0.8,
                       ),
-                      _SettingsRow(
-                        icon: Icons.cloud_outlined,
-                        title: 'Cloud Backup',
-                        detail: 'Enabled',
-                        onTap: () {},
-                      ),
-                      _SettingsRow(
-                        icon: Icons.history,
-                        title: 'History',
-                        detail: '30 days',
-                        onTap: () => _showHistoryPicker(context),
-                        isLast: true,
-                      ),
-                    ],
+                    ),
                   ),
-                  const SizedBox(height: 20),
-                  // Privacy group
-                  _SettingsGroup(
-                    label: 'PRIVACY',
-                    children: [
-                      _SettingsRow(
-                        icon: Icons.lock_outline,
-                        title: 'End-to-End Encryption',
-                        trailing: Switch(
-                          value: _e2eEncryption,
-                          onChanged: (v) => setState(() => _e2eEncryption = v),
-                        ),
-                      ),
-                      _SettingsRow(
-                        icon: Icons.security_outlined,
-                        title: 'Exclude Passwords',
-                        trailing: Switch(
-                          value: _excludePasswords,
-                          onChanged: (v) => setState(() => _excludePasswords = v),
-                        ),
-                      ),
-                      _SettingsRow(
-                        icon: Icons.notifications_outlined,
-                        title: 'Notifications',
-                        detail: 'Silent',
-                        onTap: () {},
-                        isLast: true,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  // Appearance group
-                  _SettingsGroup(
-                    label: 'APPEARANCE',
-                    children: [
-                      _SettingsRow(
-                        icon: isDark ? Icons.dark_mode_outlined : Icons.light_mode_outlined,
-                        title: 'Dark Mode',
-                        trailing: Switch(
-                          value: isDark,
-                          onChanged: (_) => widget.onToggleTheme(),
-                        ),
-                        isLast: true,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  // About group
-                  _SettingsGroup(
-                    label: 'ABOUT',
-                    children: [
-                      _SettingsRow(
-                        icon: Icons.info_outline,
-                        title: 'Version',
-                        detail: '2.4.1 (8812)',
-                        onTap: () {},
-                      ),
-                      _SettingsRow(
-                        icon: Icons.privacy_tip_outlined,
-                        title: 'Privacy Policy',
-                        onTap: () {},
-                      ),
-                      _SettingsRow(
-                        icon: Icons.logout,
-                        title: 'Sign Out',
-                        onTap: () => _confirmSignOut(context),
-                        isLast: true,
-                        destructive: true,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 40),
                 ],
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  void _showHistoryPicker(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (ctx) {
-        final cs = Theme.of(ctx).colorScheme;
-        final options = ['7 days', '14 days', '30 days', '90 days', 'Unlimited'];
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+          // Settings groups
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.only(bottom: 120),
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Text('History Duration',
-                      style: Theme.of(ctx).textTheme.titleMedium),
+                _SettingsGroup(
+                  label: 'Sync',
+                  children: [
+                    _SettingsRow(
+                      icon: Icons.bolt_outlined,
+                      iconColor: const Color(0xFF22E0C8).withOpacity(0.15),
+                      title: 'Universal Clipboard',
+                      toggleValue: _universalClipboard,
+                      onToggle: (v) => setState(() => _universalClipboard = v),
+                    ),
+                    _SettingsRow(
+                      icon: Icons.cloud_outlined,
+                      iconColor: Colors.white.withOpacity(0.08),
+                      title: 'iCloud Backup',
+                      detail: 'Enabled',
+                    ),
+                    _SettingsRow(
+                      icon: Icons.history,
+                      iconColor: Colors.white.withOpacity(0.08),
+                      title: 'History Retention',
+                      detail: '30 days',
+                      isLast: true,
+                    ),
+                  ],
                 ),
-                ...options.map(
-                  (o) => ListTile(
-                    title: Text(o),
-                    trailing: o == '30 days'
-                        ? Icon(Icons.check, color: cs.primary)
-                        : null,
-                    onTap: () => Navigator.pop(ctx),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                  ),
+                _SettingsGroup(
+                  label: 'Privacy',
+                  children: [
+                    _SettingsRow(
+                      icon: Icons.lock_outline,
+                      iconColor: Colors.white.withOpacity(0.08),
+                      title: 'End-to-End Encryption',
+                      toggleValue: _e2eEncryption,
+                      onToggle: (v) => setState(() => _e2eEncryption = v),
+                    ),
+                    _SettingsRow(
+                      icon: Icons.shield_outlined,
+                      iconColor: Colors.white.withOpacity(0.08),
+                      title: 'Exclude Passwords',
+                      toggleValue: _excludePasswords,
+                      onToggle: (v) => setState(() => _excludePasswords = v),
+                    ),
+                    _SettingsRow(
+                      icon: Icons.notifications_outlined,
+                      iconColor: Colors.white.withOpacity(0.08),
+                      title: 'Sync Notifications',
+                      detail: 'Silent',
+                      isLast: true,
+                    ),
+                  ],
+                ),
+                _SettingsGroup(
+                  label: 'Advanced',
+                  children: [
+                    _SettingsRow(
+                      icon: Icons.wifi,
+                      iconColor: Colors.white.withOpacity(0.08),
+                      title: 'Local Network Only',
+                      toggleValue: _localNetworkOnly,
+                      onToggle: (v) => setState(() => _localNetworkOnly = v),
+                      isLast: true,
+                    ),
+                  ],
                 ),
               ],
             ),
-          ),
-        );
-      },
-    );
-  }
-
-  void _confirmSignOut(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Sign Out'),
-        content: const Text('Are you sure you want to sign out? Your clipboard history will be cleared.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx),
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(ctx).colorScheme.error,
-            ),
-            child: const Text('Sign Out'),
           ),
         ],
       ),
@@ -284,99 +194,159 @@ class _SettingsGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final tt = Theme.of(context).textTheme;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 10),
-          child: Text(
-            label,
-            style: tt.labelSmall?.copyWith(
-              color: cs.primary,
-              letterSpacing: 0.8,
-              fontWeight: FontWeight.w600,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
+            child: Text(
+              label.toUpperCase(),
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: kWhite45,
+                letterSpacing: 1,
+                fontFamily: 'Courier',
+              ),
             ),
           ),
-        ),
-        Container(
-          decoration: BoxDecoration(
-            color: cs.surfaceContainerLow,
-            borderRadius: BorderRadius.circular(28),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: GlassCard(
+              borderRadius: BorderRadius.circular(18),
+              child: Column(children: children),
+            ),
           ),
-          clipBehavior: Clip.antiAlias,
-          child: Column(children: children),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
 
 class _SettingsRow extends StatelessWidget {
   final IconData icon;
+  final Color iconColor;
   final String title;
   final String? detail;
-  final Widget? trailing;
-  final VoidCallback? onTap;
+  final bool? toggleValue;
+  final ValueChanged<bool>? onToggle;
   final bool isLast;
-  final bool destructive;
 
   const _SettingsRow({
     required this.icon,
+    required this.iconColor,
     required this.title,
     this.detail,
-    this.trailing,
-    this.onTap,
+    this.toggleValue,
+    this.onToggle,
     this.isLast = false,
-    this.destructive = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final tt = Theme.of(context).textTheme;
-    final color = destructive ? cs.error : cs.onSurface;
-
-    return Column(
-      children: [
-        InkWell(
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-            child: Row(
-              children: [
-                Icon(icon, size: 22, color: destructive ? cs.error : cs.onSurfaceVariant),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Text(
-                    title,
-                    style: tt.bodyLarge?.copyWith(
-                      color: color,
-                      fontWeight: FontWeight.w400,
-                    ),
+    return GestureDetector(
+      onTap: toggleValue != null ? () => onToggle?.call(!toggleValue!) : null,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          border: isLast
+              ? null
+              : Border(
+                  bottom: BorderSide(
+                    color: Colors.white.withOpacity(0.06),
+                    width: 0.5,
                   ),
                 ),
-                if (detail != null)
-                  Text(
-                    detail!,
-                    style: tt.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
-                  ),
-                ?trailing,
-                if (onTap != null && trailing == null && detail == null)
-                  Icon(Icons.chevron_right, color: cs.onSurfaceVariant),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 30,
+              height: 30,
+              decoration: BoxDecoration(
+                color: iconColor,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.06),
+                  width: 0.5,
+                ),
+              ),
+              child: Icon(icon, size: 15, color: Colors.white),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 15,
+                  color: Colors.white,
+                  letterSpacing: -0.2,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            if (detail != null) ...[
+              Text(
+                detail!,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: kWhite45,
+                  fontFamily: 'Courier',
+                ),
+              ),
+              const SizedBox(width: 4),
+              Icon(Icons.chevron_right, size: 14, color: kWhite30),
+            ],
+            if (toggleValue != null)
+              _Toggle(value: toggleValue!, onChanged: onToggle ?? (_) {}),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _Toggle extends StatelessWidget {
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  const _Toggle({required this.value, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => onChanged(!value),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        width: 42,
+        height: 24,
+        padding: const EdgeInsets.all(2),
+        decoration: BoxDecoration(
+          color: value ? kTeal : Colors.white.withOpacity(0.08),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: AnimatedAlign(
+          duration: const Duration(milliseconds: 200),
+          alignment: value ? Alignment.centerRight : Alignment.centerLeft,
+          child: Container(
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.3),
+                  blurRadius: 3,
+                  offset: const Offset(0, 1),
+                ),
               ],
             ),
           ),
         ),
-        if (!isLast)
-          Divider(
-            height: 1,
-            indent: 56,
-            color: cs.outlineVariant.withValues(alpha: 0.5),
-          ),
-      ],
+      ),
     );
   }
 }

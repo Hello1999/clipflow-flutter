@@ -6,8 +6,7 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:clipflow_claude/app.dart';
+import 'package:clipflow_claude/main.dart';
 
 void main() {
   testWidgets('App smoke test', (WidgetTester tester) async {
