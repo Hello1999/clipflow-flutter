@@ -32,11 +32,9 @@ class GlassCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(strong ? 0.07 : 0.045),
             borderRadius: br,
-            border: border ??
-                Border.all(
-                  color: Colors.white.withOpacity(0.10),
-                  width: 0.5,
-                ),
+            border:
+                border ??
+                Border.all(color: Colors.white.withOpacity(0.10), width: 0.5),
             boxShadow: [
               BoxShadow(
                 color: Colors.white.withOpacity(0.05),
@@ -77,10 +75,7 @@ class TealGlassCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.045),
             borderRadius: br,
-            border: Border.all(
-              color: kTeal.withOpacity(0.3),
-              width: 0.5,
-            ),
+            border: Border.all(color: kTeal.withOpacity(0.3), width: 0.5),
           ),
           child: child,
         ),
