@@ -1,17 +1,8 @@
-import 'package:flutter/material.dart';
-import '../widgets/m3_status_bar.dart';
-import '../widgets/m3_header.dart';
-import '../theme/m3_colors.dart';
+import 'package:flutter/cupertino.dart';
+import '../theme/ios_colors.dart';
 
 class SettingsScreen extends StatefulWidget {
-  final bool isDark;
-  final VoidCallback onToggleTheme;
-
-  const SettingsScreen({
-    super.key,
-    required this.isDark,
-    required this.onToggleTheme,
-  });
+  const SettingsScreen({super.key});
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -21,290 +12,305 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _universalClipboard = true;
   bool _e2eEncryption = true;
   bool _excludePasswords = true;
-  bool _localNetwork = false;
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final surf1 = M3Colors.surface1(cs);
+    return CupertinoPageScaffold(
+      backgroundColor: CupertinoColors.systemGroupedBackground,
+      child: CustomScrollView(
+        slivers: [
+          const CupertinoSliverNavigationBar(
+            largeTitle: Text('Settings'),
+          ),
+          SliverToBoxAdapter(child: _buildProfile(context)),
+          SliverToBoxAdapter(
+            child: _buildGroup(
+              context,
+              header: 'Sync',
+              footer: null,
+              rows: [
+                _IOSRow(
+                  icon: CupertinoIcons.bolt_horizontal_circle_fill,
+                  iconBg: context.blue,
+                  title: 'Universal Clipboard',
+                  toggle: _universalClipboard,
+                  onToggle: (v) =>
+                      setState(() => _universalClipboard = v),
+                  isLast: false,
+                ),
+                _IOSRow(
+                  icon: CupertinoIcons.cloud_fill,
+                  iconBg: const Color(0xFF5AC8FA),
+                  title: 'iCloud',
+                  detail: 'On',
+                  chev: true,
+                  isLast: false,
+                ),
+                _IOSRow(
+                  icon: CupertinoIcons.clock_fill,
+                  iconBg: context.orange,
+                  title: 'History',
+                  detail: '30 Days',
+                  chev: true,
+                  isLast: true,
+                ),
+              ],
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: _buildGroup(
+              context,
+              header: 'Privacy & Security',
+              footer:
+                  'Only this device can decrypt synced clipboard items. Apple never has access.',
+              rows: [
+                _IOSRow(
+                  icon: CupertinoIcons.lock_fill,
+                  iconBg: context.green,
+                  title: 'End-to-End Encryption',
+                  toggle: _e2eEncryption,
+                  onToggle: (v) =>
+                      setState(() => _e2eEncryption = v),
+                  isLast: false,
+                ),
+                _IOSRow(
+                  icon: CupertinoIcons.shield_lefthalf_fill,
+                  iconBg: context.purple,
+                  title: 'Exclude Passwords',
+                  toggle: _excludePasswords,
+                  onToggle: (v) =>
+                      setState(() => _excludePasswords = v),
+                  isLast: false,
+                ),
+                _IOSRow(
+                  icon: CupertinoIcons.bell_fill,
+                  iconBg: context.red,
+                  title: 'Notifications',
+                  detail: 'Silent',
+                  chev: true,
+                  isLast: true,
+                ),
+              ],
+            ),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 32)),
+        ],
+      ),
+    );
+  }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const M3StatusBar(),
-        const M3Header(title: 'Settings', meta: 'v2.4.1 · build 8812'),
-        // Profile card
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-          child: Material(
-            color: cs.secondaryContainer,
-            borderRadius: BorderRadius.circular(28),
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Row(
+  Widget _buildProfile(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
+        decoration: BoxDecoration(
+          color: context.cardBg,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 54,
+              height: 54,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [context.blue, const Color(0xFF5856D6)],
+                ),
+                shape: BoxShape.circle,
+              ),
+              alignment: Alignment.center,
+              child: const Text(
+                'MR',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: CupertinoColors.white,
+                  decoration: TextDecoration.none,
+                ),
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: 52,
-                    height: 52,
-                    decoration: BoxDecoration(
-                      color: cs.primary,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
-                      child: Text(
-                        'MR',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: cs.onPrimary,
-                        ),
-                      ),
+                  Text(
+                    'Morgan Rivera',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: context.label,
+                      letterSpacing: 0.3,
+                      decoration: TextDecoration.none,
                     ),
                   ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Morgan Rivera',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: cs.onSecondaryContainer,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          'morgan@rivera.studio',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: cs.onSecondaryContainer.withValues(alpha: 0.75),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: cs.tertiaryContainer,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      'PRO',
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                        color: cs.onTertiaryContainer,
-                        letterSpacing: 0.6,
-                      ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Apple ID, iCloud, Media & Purchases',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: context.label2,
+                      letterSpacing: -0.08,
+                      decoration: TextDecoration.none,
                     ),
                   ),
                 ],
               ),
             ),
-          ),
+            Icon(
+              CupertinoIcons.chevron_right,
+              size: 13,
+              color: context.label3,
+            ),
+          ],
         ),
-        // Settings list
-        Expanded(
-          child: ListView(
-            padding: const EdgeInsets.only(bottom: 100),
-            children: [
-              _SettingsGroup(
-                label: 'Sync',
-                labelColor: cs.primary,
-                surf1: surf1,
-                children: [
-                  _SettingsRow(
-                    icon: Icons.bolt_outlined,
-                    title: 'Universal Clipboard',
-                    toggleValue: _universalClipboard,
-                    onToggle: (v) => setState(() => _universalClipboard = v),
-                    cs: cs,
-                  ),
-                  _SettingsRow(
-                    icon: Icons.cloud_outlined,
-                    title: 'Cloud Backup',
-                    detail: 'Enabled',
-                    cs: cs,
-                  ),
-                  _SettingsRow(
-                    icon: Icons.history,
-                    title: 'History',
-                    detail: '30 days',
-                    cs: cs,
-                    isLast: true,
-                  ),
-                ],
-              ),
-              _SettingsGroup(
-                label: 'Privacy',
-                labelColor: cs.primary,
-                surf1: surf1,
-                children: [
-                  _SettingsRow(
-                    icon: Icons.lock_outline,
-                    title: 'End-to-End Encryption',
-                    toggleValue: _e2eEncryption,
-                    onToggle: (v) => setState(() => _e2eEncryption = v),
-                    cs: cs,
-                  ),
-                  _SettingsRow(
-                    icon: Icons.shield_outlined,
-                    title: 'Exclude Passwords',
-                    toggleValue: _excludePasswords,
-                    onToggle: (v) => setState(() => _excludePasswords = v),
-                    cs: cs,
-                  ),
-                  _SettingsRow(
-                    icon: Icons.notifications_outlined,
-                    title: 'Notifications',
-                    detail: 'Silent',
-                    cs: cs,
-                    isLast: true,
-                  ),
-                ],
-              ),
-              _SettingsGroup(
-                label: 'Advanced',
-                labelColor: cs.primary,
-                surf1: surf1,
-                children: [
-                  _SettingsRow(
-                    icon: Icons.wifi_outlined,
-                    title: 'Local Network Only',
-                    toggleValue: _localNetwork,
-                    onToggle: (v) => setState(() => _localNetwork = v),
-                    cs: cs,
-                  ),
-                  _SettingsRow(
-                    icon: widget.isDark ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
-                    title: widget.isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode',
-                    cs: cs,
-                    onTap: widget.onToggleTheme,
-                    isLast: true,
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ],
+      ),
     );
   }
-}
 
-class _SettingsGroup extends StatelessWidget {
-  final String label;
-  final Color labelColor;
-  final Color surf1;
-  final List<Widget> children;
-
-  const _SettingsGroup({
-    required this.label,
-    required this.labelColor,
-    required this.surf1,
-    required this.children,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildGroup(
+    BuildContext context, {
+    required String header,
+    required String? footer,
+    required List<Widget> rows,
+  }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.only(bottom: 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(24, 0, 24, 10),
+            padding: const EdgeInsets.fromLTRB(32, 22, 32, 6),
             child: Text(
-              label.toUpperCase(),
+              header.toUpperCase(),
               style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.8,
-                color: labelColor,
+                fontSize: 13,
+                color: context.label2,
+                letterSpacing: -0.08,
+                decoration: TextDecoration.none,
               ),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Material(
-              color: surf1,
-              borderRadius: BorderRadius.circular(28),
-              clipBehavior: Clip.antiAlias,
-              child: Column(children: children),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Column(children: rows),
             ),
           ),
+          if (footer != null)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(32, 8, 32, 0),
+              child: Text(
+                footer,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: context.label2,
+                  letterSpacing: -0.08,
+                  height: 1.3,
+                  decoration: TextDecoration.none,
+                ),
+              ),
+            ),
         ],
       ),
     );
   }
 }
 
-class _SettingsRow extends StatelessWidget {
+// ── iOS inset grouped row ─────────────────────────────────────
+class _IOSRow extends StatelessWidget {
   final IconData icon;
+  final Color iconBg;
   final String title;
   final String? detail;
-  final bool? toggleValue;
+  final bool? toggle;
   final ValueChanged<bool>? onToggle;
-  final VoidCallback? onTap;
+  final bool chev;
   final bool isLast;
-  final ColorScheme cs;
 
-  const _SettingsRow({
+  const _IOSRow({
     required this.icon,
+    required this.iconBg,
     required this.title,
-    required this.cs,
     this.detail,
-    this.toggleValue,
+    this.toggle,
     this.onToggle,
-    this.onTap,
-    this.isLast = false,
+    this.chev = false,
+    required this.isLast,
   });
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: toggleValue != null ? () => onToggle?.call(!toggleValue!) : onTap,
+    return GestureDetector(
+      onTap: toggle != null
+          ? () => onToggle?.call(!(toggle!))
+          : null,
+      behavior: HitTestBehavior.opaque,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-        decoration: BoxDecoration(
-          border: isLast
-              ? null
-              : Border(
-                  bottom: BorderSide(
-                    color: cs.outlineVariant,
-                    width: 0.5,
-                  ),
-                ),
-        ),
-        child: Row(
+        color: context.cardBg,
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+        child: Column(
           children: [
-            Icon(icon, size: 22, color: cs.onSurfaceVariant),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w400,
-                  color: cs.onSurface,
-                ),
+            SizedBox(
+              height: 44,
+              child: Row(
+                children: [
+                  Container(
+                    width: 29,
+                    height: 29,
+                    decoration: BoxDecoration(
+                      color: iconBg,
+                      borderRadius: BorderRadius.circular(7),
+                    ),
+                    child: Icon(icon, size: 17, color: CupertinoColors.white),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 17,
+                        color: context.label,
+                        letterSpacing: -0.43,
+                        decoration: TextDecoration.none,
+                      ),
+                    ),
+                  ),
+                  if (detail != null) ...[
+                    Text(
+                      detail!,
+                      style: TextStyle(
+                        fontSize: 17,
+                        color: context.label2,
+                        letterSpacing: -0.43,
+                        decoration: TextDecoration.none,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                  ],
+                  if (toggle != null)
+                    CupertinoSwitch(
+                      value: toggle!,
+                      onChanged: onToggle,
+                    )
+                  else if (chev)
+                    Icon(
+                      CupertinoIcons.chevron_right,
+                      size: 13,
+                      color: context.label3,
+                    ),
+                ],
               ),
             ),
-            if (detail != null) ...[
-              Text(
-                detail!,
-                style: TextStyle(fontSize: 13, color: cs.onSurfaceVariant),
-              ),
-              const SizedBox(width: 4),
-              Icon(Icons.chevron_right, size: 18, color: cs.onSurfaceVariant),
-            ],
-            if (toggleValue != null)
-              Switch(
-                value: toggleValue!,
-                onChanged: onToggle,
+            if (!isLast)
+              Container(
+                height: 0.33,
+                margin: const EdgeInsets.only(left: 57),
+                color: context.sep,
               ),
           ],
         ),
